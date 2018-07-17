@@ -38,15 +38,12 @@ class HTTPHandler_esp(BaseHTTPRequestHandler):
         if 'get_esp' in request:
             size = int(request.split(' ')[1])
             self.send_esp_data(size)
-            #print(request)
             
         else:    
             self.store_esp_data(request)
-            #print(request)
-            
+            print(request)
             #send code 200 response
             self.send_response(200)
-    
             #send header first
             self.send_header('Content-type','text-html')
             self.end_headers()
@@ -86,10 +83,11 @@ class HTTPHandler_esp(BaseHTTPRequestHandler):
     
         #send file content to client
         self.wfile.write(jsonarray.encode())
-        
+        conn.commit()
         conn.close()
         
 class HTTPHandler_opencv(BaseHTTPRequestHandler): 
+    answer = "OK"
     def do_GET(self):
         try:
             request = base64.b64decode(self.path[1:].encode()).decode()
@@ -99,14 +97,19 @@ class HTTPHandler_opencv(BaseHTTPRequestHandler):
         if 'get_opencv' in request:
             size = int(request.split(' ')[1])
             self.send_opencv_data(size)
-            #print(request)
             
         else:    
             self.store_opencv_data(request)
-            #print(request)
             #send code 200 response
             self.send_response(200)
-
+        
+            #send header first
+            self.send_header('Content-type','text-html')
+            self.end_headers()
+        
+            #send file content to client
+            self.wfile.write(answer.encode())            
+            return
     
     def store_opencv_data(self,data):
         conn = sqlite3.connect(file)
@@ -164,6 +167,8 @@ def run():
     httpd.serve_forever()
     
 if __name__ == '__main__':
+    print('http server is starting...')
     Thread(target=serve_on_port_2, args=[port_2]).start()
     Thread(target=serve_on_port_1, args=[port_1]).start()
+    print('http server is running...')
     

@@ -10,9 +10,13 @@ os.chdir("{0}/data".format(parent))
 conn = sqlite3.connect("data.db")
 cursor = conn.cursor()
 
-sql_1 = "DELETE FROM esp"
-sql_2 = "DELETE FROM opencv"
+sql = """
+DELETE FROM esp;
+DELETE FROM sqlite_sequence where name='esp';
+DELETE FROM opencv;
+DELETE FROM sqlite_sequence where name='opencv';
+"""
 
-cursor.execute(sql_1)
-cursor.execute(sql_2)
+cursor.executescript(sql)
 conn.commit()
+conn.close()
