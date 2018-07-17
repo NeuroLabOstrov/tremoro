@@ -21,7 +21,6 @@
 #define ssid "NaN"
 #define password "1234Qawsed"
 #define addr "http://192.168.43.150/"
-#define port 80
 
 ESP8266WiFiMulti WiFiMulti;
 
@@ -62,10 +61,7 @@ void I2CwriteByte(uint8_t Address, uint8_t Register, uint8_t Data) {            
 
 String sendtoserver(String data){
   String response = "None";
-  Serial.print("connecting to ");
-  Serial.println(addr);
   if((WiFiMulti.run() == WL_CONNECTED)) {
-        Serial.println("Connection Success");
         HTTPClient http;                  //Http begin
         http.setTimeout(500000);
         
@@ -87,9 +83,6 @@ String sendtoserver(String data){
         }
         http.end();
     }
-    else{
-      Serial.println("Connection Error");
-    }
     return response;
 }
 
@@ -97,34 +90,17 @@ void setup()
 {
   Wire.begin();
   Serial.begin(115200);
-  delay(10);
-  WiFiMulti.addAP(ssid, password);
-
-  Serial.println();
-  Serial.println();
-  Serial.print("Wait for WiFi... ");
-
-  while(WiFiMulti.run() != WL_CONNECTED) {
-      Serial.print(".");
-      delay(200);
-  }
-  
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-  
   I2CwriteByte(MPU9250_ADDRESS, 29, 0x06);                                        //Фильтр акселерометра на 5Гц
   I2CwriteByte(MPU9250_ADDRESS, 26, 0x06);                                        //Фильтр гироскопа на 5Гц
   I2CwriteByte(MPU9250_ADDRESS, 27, GYRO_FULL_SCALE_1000_DPS);                    //настройка радиуса гироскопа
   I2CwriteByte(MPU9250_ADDRESS, 28, ACC_FULL_SCALE_4_G);                          //Настройка радиуса акселерометра
   I2CwriteByte(MPU9250_ADDRESS, 0x37, 0x02);
   I2CwriteByte(MAG_ADDRESS, 0x0A, 0x16);                                          //Настройка разрешения магнетометра
-  
   pinMode(D6, OUTPUT);
   pinMode(A0, INPUT);
   ti = millis();
   delay(4000);
+  WiFiMulti.addAP(ssid, password);
 }
 
 
@@ -199,8 +175,7 @@ void loop() {
   I2Cread(MAG_ADDRESS, 0x03, 7, Mag);
 
   Magnetometer_data_conversion();
-  //out();
-  
+
   if (k <= 10000000) {
     k++;
   }
