@@ -65,13 +65,8 @@ class HTTPHandler_esp(BaseHTTPRequestHandler):
         conn = sqlite3.connect(file)
         cursor = conn.cursor()
         
-        sql = "SELECT id FROM esp"
-        cursor.execute(sql)
-        ids = cursor.fetchall()
-        last = ids[len(ids) - 1][0]
-        
-        sql = "SELECT * FROM esp WHERE id = ?"
-        cursor.execute(sql,[(last)])
+        sql = "SELECT * FROM esp ORDER BY id DESC LIMIT ?"
+        cursor.execute(sql,[(size)])
         l = cursor.fetchall()
         
         
@@ -130,7 +125,7 @@ class HTTPHandler_opencv(BaseHTTPRequestHandler):
         conn = sqlite3.connect(file)
         cursor = conn.cursor()
         
-        sql = "SELECT * FROM opencv WHERE id < ?"
+        sql = "SELECT * FROM esp ORDER BY id DESC LIMIT ?"
         cursor.execute(sql,[(size)])
         l = cursor.fetchall()
         
