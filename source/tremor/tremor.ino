@@ -189,16 +189,16 @@ void loop() {
   a = sendtoserver(data_string);
   Serial.println(a);
   
-  uint8_t ST1;                                            //Чтение данных магнетометра
-  do
-  {
-    I2Cread(MAG_ADDRESS, 0x02, 1, &ST1);
-  }
-  while (!(ST1 & 0x01));
+//  uint8_t ST1;                                            //Чтение данных магнетометра
+//  do
+//  {
+//    I2Cread(MAG_ADDRESS, 0x02, 1, &ST1);
+//  }
+//  while (!(ST1 & 0x01));
 
-  I2Cread(MAG_ADDRESS, 0x03, 7, Mag);
+  //I2Cread(MAG_ADDRESS, 0x03, 7, Mag);
 
-  Magnetometer_data_conversion();
+  //Magnetometer_data_conversion();
   //out();
   
   if (k <= 10000000) {

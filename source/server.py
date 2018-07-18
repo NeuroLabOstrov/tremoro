@@ -41,7 +41,6 @@ class HTTPHandler_esp(BaseHTTPRequestHandler):
             
         else:    
             self.store_esp_data(request)
-            print(request)
             #send code 200 response
             self.send_response(200)
             #send header first
@@ -66,9 +65,15 @@ class HTTPHandler_esp(BaseHTTPRequestHandler):
         conn = sqlite3.connect(file)
         cursor = conn.cursor()
         
-        sql = "SELECT * FROM esp WHERE id < ?"
-        cursor.execute(sql,[(size)])
+        sql = "SELECT id FROM esp"
+        cursor.execute(sql)
+        ids = cursor.fetchall()
+        last = ids[len(ids) - 1][0]
+        
+        sql = "SELECT * FROM esp WHERE id = ?"
+        cursor.execute(sql,[(last)])
         l = cursor.fetchall()
+        
         
         arg = ('id','time','ax','ay','az','gx','gy','gz')
         dic = [dict(zip(arg,i)) for i in l]
