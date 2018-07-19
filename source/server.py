@@ -6,7 +6,7 @@ import base64
 import sqlite3
 import json
 import time
-from threading import Thread
+from threading import Thread,currentThread
 
 
 addr = '192.168.43.102'
@@ -57,7 +57,7 @@ class HTTPHandler_esp(BaseHTTPRequestHandler):
             elif self.client_address[0] == '':
                 self.store_esp_data(request,3)
             
-            print(threading.currentThread().getName())
+            #print(currentThread().getName())
             #send code 200 response
             self.send_response(200)
             #send header first
@@ -115,7 +115,8 @@ class HTTPHandler_opencv(BaseHTTPRequestHandler):
             size = int(request.split(' ')[1])
             self.send_opencv_data(size)
             
-        else:    
+        else:
+            #print(currentThread().getName())
             self.store_opencv_data(request)
             #send code 200 response
             self.send_response(200)
@@ -125,7 +126,7 @@ class HTTPHandler_opencv(BaseHTTPRequestHandler):
             self.end_headers()
         
             #send file content to client
-            self.wfile.write(answer.encode())            
+            self.wfile.write(self.answer.encode())            
             return
     
     def store_opencv_data(self,data):

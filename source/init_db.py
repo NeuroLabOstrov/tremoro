@@ -42,6 +42,7 @@ emg REAL NOT NULL);
 sql_opencv="""
 CREATE TABLE opencv(
 id INTEGER primary key AUTOINCREMENT,
+time REAL NOT NULL,
 x REAL NOT NULL,
 y REAL NOT NULL);
 """
