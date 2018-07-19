@@ -9,7 +9,7 @@ import time
 from threading import Thread
 
 
-addr = '192.168.43.150'
+addr = '192.168.43.102'
 port_1 = 80
 port_2 = 4444
 
@@ -35,12 +35,28 @@ class HTTPHandler_esp(BaseHTTPRequestHandler):
         except BaseException:
             request = self.path[1:]
             
-        if 'get_esp' in request:
+        if 'get_esp_1' in request:
             size = int(request.split(' ')[1])
-            self.send_esp_data(size)
+            self.send_esp_data(size,1)
             
-        else:    
-            self.store_esp_data(request)
+        elif 'get_esp_2' in request:
+            size = int(request.split(' ')[1])
+            self.send_esp_data(size,2)
+            
+        elif 'get_esp_3' in request:
+            size = int(request.split(' ')[1])
+            self.send_esp_data(size,3)           
+            
+        else: 
+            if self.client_address[0] == '192.168.43.149':
+                store_esp_data(request,1)
+                
+            elif self.client_address[0] == '':
+                store_esp_data(request,2)
+                
+            elif self.client_address[0] == '':
+                store_esp_data(request,3)
+            
             #send code 200 response
             self.send_response(200)
             #send header first
@@ -51,26 +67,26 @@ class HTTPHandler_esp(BaseHTTPRequestHandler):
             self.wfile.write(answer.encode())
         return
     
-    def store_esp_data(self,data):
+    def store_esp_data(self,data,esp_num):
         conn = sqlite3.connect(file)
         cursor = conn.cursor()
         time1 = time.time()
-        ax,ay,az,gx,gy,gz = data.split(' ')
-        data1 = [(time1,ax,ay,az,gx,gy,gz)]
-        cursor.executemany("INSERT INTO esp(time,ax,ay,az,gx,gy,gz) VALUES (?,?,?,?,?,?,?)", data1)
+        ax,ay,az,gx,gy,gz,emg = data.split(' ')
+        data1 = [(time1,esp_num,ax,ay,az,gx,gy,gz,emg)]
+        cursor.executemany("INSERT INTO esp(time,esp_num,ax,ay,az,gx,gy,gz,emg) VALUES (?,?,?,?,?,?,?,?,?)", data1)
         conn.commit()
         conn.close()
         
-    def send_esp_data(self,size):
+    def send_esp_data(self,size,esp_num):
         conn = sqlite3.connect(file)
         cursor = conn.cursor()
         
-        sql = "SELECT * FROM esp ORDER BY id DESC LIMIT ?"
-        cursor.execute(sql,[(size)])
+        sql = "SELECT * FROM esp ORDER BY id DESC LIMIT ? WHERE esp_num = ?"
+        cursor.execute(sql,[(size,esp_num)])
         l = cursor.fetchall()
         
         
-        arg = ('id','time','ax','ay','az','gx','gy','gz')
+        arg = ('id','time','esp_num','ax','ay','az','gx','gy','gz','emg')
         dic = [dict(zip(arg,i)) for i in l]
         jsonarray = json.dumps(dic, ensure_ascii=False)
         
@@ -125,7 +141,7 @@ class HTTPHandler_opencv(BaseHTTPRequestHandler):
         conn = sqlite3.connect(file)
         cursor = conn.cursor()
         
-        sql = "SELECT * FROM esp ORDER BY id DESC LIMIT ?"
+        sql = "SELECT * FROM opencv ORDER BY id DESC LIMIT ?"
         cursor.execute(sql,[(size)])
         l = cursor.fetchall()
         

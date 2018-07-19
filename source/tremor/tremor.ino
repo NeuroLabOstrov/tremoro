@@ -20,7 +20,7 @@
 
 #define ssid "NaN"
 #define password "1234Qawsed"
-#define addr "http://192.168.43.150/"
+#define addr "http://192.168.43.102/"
 #define port 80
 
 ESP8266WiFiMulti WiFiMulti;
@@ -121,7 +121,7 @@ void setup()
   I2CwriteByte(MPU9250_ADDRESS, 0x37, 0x02);
   I2CwriteByte(MAG_ADDRESS, 0x0A, 0x16);                                          //Настройка разрешения магнетометра
   
-  pinMode(D6, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
   pinMode(A0, INPUT);
   ti = millis();
   delay(4000);
