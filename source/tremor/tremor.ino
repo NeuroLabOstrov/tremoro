@@ -185,7 +185,7 @@ void loop() {
   Gyroscope_data_conversion();
   
   data_string = String(ax) + " " + String(ay) + " " + String(az) +
-  " " + String(gx) + " " + String(gy) + " " + String(gz);
+  " " + String(gx) + " " + String(gy) + " " + String(gz) + " " + String(emg);
   a = sendtoserver(data_string);
   Serial.println(a);
   

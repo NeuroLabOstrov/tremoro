@@ -57,6 +57,7 @@ class HTTPHandler_esp(BaseHTTPRequestHandler):
             elif self.client_address[0] == '':
                 self.store_esp_data(request,3)
             
+            print(threading.currentThread().getName())
             #send code 200 response
             self.send_response(200)
             #send header first
