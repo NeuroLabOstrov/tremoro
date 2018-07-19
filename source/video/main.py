@@ -1,8 +1,12 @@
 from typing import Type
-
 import cv2
 import numpy as np
-#from cv2 import DMatch
+import http.client
+import base64
+
+addr = '192.168.43.102'
+port = 4444
+conn = http.client.HTTPConnection("{0}:{1}".format(addr,port))
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 cam = cv2.VideoCapture(0)
@@ -47,7 +51,13 @@ while True:
             x = int(dM10 / dArea)
             y = int(dM01 / dArea)
             cv2.circle(img, (x, y), 10, (0, 0, 255), -1)
-            print(i, ' ', x, ' ',y)
+            
+            request_data = base64.b64encode("{0} {1}".format(x,y).encode()).decode()
+            conn.request("GET", "/{0}".format(request_data))
+            r1 = conn.getresponse()
+            data1 = r1.read().decode()
+            
+            print(i, ' ', x, ' ',y,' ',data1)
 
         # if lastx > 0 and lasty > 0:
         #     cv2.line(path, (lastx, lasty), (x, y), path_color, 5)
@@ -57,4 +67,5 @@ while True:
     cv2.imshow("cam", img)
     cv2.imshow("maskClose", maskClose)
     cv2.waitKey(10)
-
+    
+conn.close()

@@ -49,13 +49,13 @@ class HTTPHandler_esp(BaseHTTPRequestHandler):
             
         else: 
             if self.client_address[0] == '192.168.43.149':
-                store_esp_data(request,1)
+                self.store_esp_data(request,1)
                 
             elif self.client_address[0] == '':
-                store_esp_data(request,2)
+                self.store_esp_data(request,2)
                 
             elif self.client_address[0] == '':
-                store_esp_data(request,3)
+                self.store_esp_data(request,3)
             
             #send code 200 response
             self.send_response(200)
@@ -72,8 +72,8 @@ class HTTPHandler_esp(BaseHTTPRequestHandler):
         cursor = conn.cursor()
         time1 = time.time()
         ax,ay,az,gx,gy,gz,emg = data.split(' ')
-        data1 = [(time1,esp_num,ax,ay,az,gx,gy,gz,emg)]
-        cursor.executemany("INSERT INTO esp(time,esp_num,ax,ay,az,gx,gy,gz,emg) VALUES (?,?,?,?,?,?,?,?,?)", data1)
+        data1 = [(esp_num,time1,ax,ay,az,gx,gy,gz,emg)]
+        cursor.executemany("INSERT INTO esp(esp_num,time,ax,ay,az,gx,gy,gz,emg) VALUES (?,?,?,?,?,?,?,?,?)", data1)
         conn.commit()
         conn.close()
         
@@ -81,12 +81,12 @@ class HTTPHandler_esp(BaseHTTPRequestHandler):
         conn = sqlite3.connect(file)
         cursor = conn.cursor()
         
-        sql = "SELECT * FROM esp ORDER BY id DESC LIMIT ? WHERE esp_num = ?"
-        cursor.execute(sql,[(size,esp_num)])
+        sql = "SELECT * FROM esp WHERE esp_num = ? ORDER BY id DESC LIMIT ?"
+        cursor.execute(sql,[(esp_num),(size)])
         l = cursor.fetchall()
         
         
-        arg = ('id','time','esp_num','ax','ay','az','gx','gy','gz','emg')
+        arg = ('id','esp_num','time','ax','ay','az','gx','gy','gz','emg')
         dic = [dict(zip(arg,i)) for i in l]
         jsonarray = json.dumps(dic, ensure_ascii=False)
         

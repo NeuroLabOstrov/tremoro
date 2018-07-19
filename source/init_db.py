@@ -7,8 +7,21 @@ def get_parent_dir(directory):
 parent = get_parent_dir(os.getcwd())
 os.chdir("{0}/data".format(parent))
 
-os.remove('data.db')
 
+conn = sqlite3.connect("data.db")
+cursor = conn.cursor()
+
+sql_delete = """
+DELETE FROM esp;
+DELETE FROM sqlite_sequence where name='esp';
+DELETE FROM opencv;
+DELETE FROM sqlite_sequence where name='opencv';
+"""
+cursor.executescript(sql_delete)
+conn.commit()
+conn.close()
+
+os.remove('data.db')
 conn = sqlite3.connect("data.db")
 cursor = conn.cursor()
 
@@ -32,7 +45,6 @@ id INTEGER primary key AUTOINCREMENT,
 x REAL NOT NULL,
 y REAL NOT NULL);
 """
-
 
 cursor.executescript(sql_esp)
 cursor.executescript(sql_opencv)
