@@ -8,7 +8,7 @@
 #define    MPU9250_ADDRESS            0x68
 #define    MAG_ADDRESS                0x0C
 
-#define    GYRO_FULL_SCALE_250_DPS    0x00
+#define    GYRO_FULL_SCALE_250_DPS    0x00//
 #define    GYRO_FULL_SCALE_500_DPS    0x08
 #define    GYRO_FULL_SCALE_1000_DPS   0x10
 #define    GYRO_FULL_SCALE_2000_DPS   0x18
@@ -21,7 +21,6 @@
 #define ssid "NaN"
 #define password "1234Qawsed"
 #define addr "http://192.168.43.102/"
-#define port 80
 
 ESP8266WiFiMulti WiFiMulti;
 
